@@ -57,7 +57,7 @@ public class TaskController {
         try {
             task.setId(id);
             taskRepository.update(task);
-            return ResponseEntity.ok(task);
+            return ResponseEntity.ok(taskRepository.getTask(id));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
