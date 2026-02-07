@@ -13,14 +13,16 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Repository
-public class TaskInMemoryRepository implements TaskRepository{
+public class TaskInMemoryRepository implements TaskRepository {
 
     private final Map<Long, Task> storage = new HashMap<>();
     private final AtomicLong idCounter = new AtomicLong(1L);
 
     @Override
     public Task create(Task task) {
-        if (task == null){throw new IllegalArgumentException("Task cannot be null"); }
+        if (task == null) {
+            throw new IllegalArgumentException("Task cannot be null");
+        }
         long newId = idCounter.getAndIncrement();
         task.setId(newId);
         task.setCreatedAt(LocalDateTime.now());
@@ -32,8 +34,9 @@ public class TaskInMemoryRepository implements TaskRepository{
     public Optional<Task> findById(long id) {
         return Optional.ofNullable(storage.get(id));
     }
+
     @Override
-    public Task getTask(long id){
+    public Task getTask(long id) {
         return storage.get(id);
     }
 
@@ -42,22 +45,23 @@ public class TaskInMemoryRepository implements TaskRepository{
         return storage.values().stream()
                 .filter(task -> task.getCreatedBy() == userId)
                 .filter(task -> {
-                        LocalDateTime createdAt = task.getCreatedAt();
-                        return (createdAt.isEqual(from) || createdAt.isAfter(from)) &&
-                                (createdAt.isEqual(to) || createdAt.isBefore(to));
-                    })
+                    LocalDateTime createdAt = task.getCreatedAt();
+                    return (createdAt.isEqual(from) || createdAt.isAfter(from)) &&
+                            (createdAt.isEqual(to) || createdAt.isBefore(to));
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
     public void update(Task task) throws Exception {
-        if (task == null){throw new IllegalArgumentException("Task cannot be null"); }
+        if (task == null) {
+            throw new IllegalArgumentException("Task cannot be null");
+        }
         Long taskId = task.getId();
         Task task1 = getTask(taskId);
         if (taskId == null || !storage.containsKey(taskId)) {
             throw new Exception("Task with id " + taskId + " not found");
         }
-        task1.setCreatedAt(LocalDateTime.now());
         task1.setStatus(task.getStatus());
         task1.setTitle(task.getTitle());
         storage.put(taskId, task1);
