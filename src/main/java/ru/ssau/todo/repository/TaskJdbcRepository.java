@@ -1,11 +1,13 @@
 package ru.ssau.todo.repository;
 
+import org.springframework.stereotype.Repository;
 import ru.ssau.todo.entity.Task;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class TaskJdbcRepository implements TaskRepository{
     @Override
     public Task create(Task task) {
