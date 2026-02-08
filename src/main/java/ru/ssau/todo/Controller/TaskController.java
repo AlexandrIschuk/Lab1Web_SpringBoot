@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.ssau.todo.repository.TaskInMemoryRepository;
+import ru.ssau.todo.repository.TaskJdbcRepository;
 import ru.ssau.todo.repository.TaskRepository;
 
 import java.net.URI;
@@ -20,6 +21,7 @@ import java.util.Optional;
 @RequestMapping("/tasks")
 public class TaskController {
     private final TaskRepository taskRepository;
+
 
     public TaskController(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
@@ -53,11 +55,11 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable long id, @RequestBody Task task) {
+    public ResponseEntity<Optional<Task>> updateTask(@PathVariable long id, @RequestBody Task task) {
         try {
             task.setId(id);
             taskRepository.update(task);
-            return ResponseEntity.ok(taskRepository.getTask(id));
+            return ResponseEntity.ok(taskRepository.findById(id));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

@@ -1,5 +1,6 @@
 package ru.ssau.todo.repository;
 
+import org.springframework.context.annotation.Profile;
 import ru.ssau.todo.entity.Task;
 import ru.ssau.todo.entity.TaskStatus;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Repository
+@Profile("inMemory")
 public class TaskInMemoryRepository implements TaskRepository {
 
     private final Map<Long, Task> storage = new HashMap<>();
