@@ -6,8 +6,6 @@ import ru.ssau.todo.entity.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.ssau.todo.repository.TaskInMemoryRepository;
-import ru.ssau.todo.repository.TaskJdbcRepository;
 import ru.ssau.todo.repository.TaskRepository;
 
 import java.net.URI;
