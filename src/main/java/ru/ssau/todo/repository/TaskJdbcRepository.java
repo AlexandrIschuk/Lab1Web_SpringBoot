@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import ru.ssau.todo.Service.TaskService;
 import ru.ssau.todo.entity.Task;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,7 @@ public class TaskJdbcRepository implements TaskRepository{
     }
 
     @Override
-    public Task create(Task task) {
+    public Task create(Task task){
         if (task == null) {
             throw new IllegalArgumentException("Task cannot be null");
         }
@@ -54,7 +55,10 @@ public class TaskJdbcRepository implements TaskRepository{
 
     @Override
     public Task getTask(long id) {
-        return null;
+        String sql = "SELECT * FROM task WHERE id = :id";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id",id);
+        return namedParameterJdbcTemplate.queryForObject(sql, params,new UserRowMapper());
     }
 
     @Override
@@ -90,8 +94,9 @@ public class TaskJdbcRepository implements TaskRepository{
 
     @Override
     public long countActiveTasksByUserId(long userId) {
-        String sql = "SELECT COUNT(*) FROM task WHERE status = :open OR status = :in_progress";
+        String sql = "SELECT COUNT(*) FROM task WHERE (status = :open OR status = :in_progress) AND createdBy = :userId";
         MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("userId",userId);
         params.addValue("open","OPEN");
         params.addValue("in_progress","IN_PROGRESS");
         return namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);

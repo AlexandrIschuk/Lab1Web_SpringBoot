@@ -2,6 +2,7 @@ package ru.ssau.todo.Controller;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.ssau.todo.Service.TaskService;
 import ru.ssau.todo.entity.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +19,17 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
-    private final TaskRepository taskRepository;
 
+    private final TaskService taskService;
 
-    public TaskController(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        Task task1 = taskRepository.create(task);
+    public ResponseEntity<Task> createTask(@RequestBody Task task) throws Exception {
+        Task task1 = taskService.create(task);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(task1.getId())
@@ -42,22 +43,22 @@ public class TaskController {
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable long id) {
 
-        return taskRepository.findById(id)
+        return taskService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
     public List<Task> getTasks(@RequestParam LocalDateTime from, @RequestParam LocalDateTime to, @RequestParam Long userId) {
-        return taskRepository.findAll(from, to, userId);
+        return taskService.findAll(from, to, userId);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Optional<Task>> updateTask(@PathVariable long id, @RequestBody Task task) {
         try {
             task.setId(id);
-            taskRepository.update(task);
-            return ResponseEntity.ok(taskRepository.findById(id));
+            taskService.update(task);
+            return ResponseEntity.ok(taskService.findById(id));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
@@ -66,12 +67,12 @@ public class TaskController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTask(@PathVariable long id) {
-        taskRepository.deleteById(id);
+        taskService.deleteById(id);
     }
 
     @GetMapping("/active/count")
     public Map<String, Long> countActiveTask(@RequestParam long userId) {
-        long count = taskRepository.countActiveTasksByUserId(userId);
+        long count = taskService.countActiveTasksByUserId(userId);
 
         Map<String, Long> response = new HashMap<>();
         response.put("activeTasksCount", count);
