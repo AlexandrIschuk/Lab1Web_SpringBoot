@@ -43,7 +43,7 @@ public class TaskService {
     }
 
     public void deleteById(long id) {
-        Task task = taskRepository.getTask(id);
+        Task task = taskRepository.findById(id).orElseThrow();
         LocalDateTime time = task.getCreatedAt();
         if(time.isAfter(LocalDateTime.now().minusMinutes(5))){
             throw new IllegalStateException("The task was created less than 5 minutes ago.");

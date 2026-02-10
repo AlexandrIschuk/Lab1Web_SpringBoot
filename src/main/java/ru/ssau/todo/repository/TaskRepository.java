@@ -31,8 +31,6 @@ public interface TaskRepository {
      */
     Optional<Task> findById(long id);
 
-    Task getTask(long id);
-
     /**
      * Возвращает список всех задач конкретного пользователя, созданных в указанном временном диапазоне.
      *

@@ -37,10 +37,6 @@ public class TaskInMemoryRepository implements TaskRepository {
         return Optional.ofNullable(storage.get(id));
     }
 
-    @Override
-    public Task getTask(long id) {
-        return storage.get(id);
-    }
 
     @Override
     public List<Task> findAll(LocalDateTime from, LocalDateTime to, long userId) {
@@ -60,7 +56,7 @@ public class TaskInMemoryRepository implements TaskRepository {
             throw new IllegalArgumentException("Task cannot be null");
         }
         Long taskId = task.getId();
-        Task task1 = getTask(taskId);
+        Task task1 = findById(taskId).orElseThrow();
         if (taskId == null || !storage.containsKey(taskId)) {
             throw new Exception("Task with id " + taskId + " not found");
         }

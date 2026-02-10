@@ -53,13 +53,6 @@ public class TaskJdbcRepository implements TaskRepository{
         return Optional.ofNullable(namedParameterJdbcTemplate.queryForObject(sql, params,new UserRowMapper()));
     }
 
-    @Override
-    public Task getTask(long id) {
-        String sql = "SELECT * FROM task WHERE id = :id";
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id",id);
-        return namedParameterJdbcTemplate.queryForObject(sql, params,new UserRowMapper());
-    }
 
     @Override
     public List<Task> findAll(LocalDateTime from, LocalDateTime to, long userId) {
