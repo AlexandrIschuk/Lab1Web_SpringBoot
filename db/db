@@ -1,0 +1,8 @@
+create table task
+(
+    id        bigserial,
+    title     varchar(100),
+    status    varchar(20),
+    createdBy bigint,
+    createdAt timestamp
+);

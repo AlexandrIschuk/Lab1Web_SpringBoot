@@ -1,22 +1,16 @@
 package ru.ssau.todo.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import ru.ssau.todo.Service.TaskService;
 import ru.ssau.todo.entity.Task;
 import ru.ssau.todo.entity.TaskStatus;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 @Profile("JDBC")
@@ -33,8 +27,7 @@ public class TaskJdbcRepository implements TaskRepository{
         if (task == null) {
             throw new IllegalArgumentException("Task cannot be null");
         }
-        LocalDateTime now = LocalDateTime.now();
-        task.setCreatedAt(now.truncatedTo(ChronoUnit.SECONDS));
+        task.setCreatedAt(LocalDateTime.now());
         String sql = "INSERT INTO task (title, status, createdBy, createdAt) VALUES (:title, :status, :createdBy, :createdAt) RETURNING id";
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("title",task.getTitle());

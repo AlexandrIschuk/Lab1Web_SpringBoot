@@ -13,13 +13,12 @@ import java.util.Optional;
 public class UserRowMapper implements RowMapper<Task> {
     @Override
     public Task mapRow(ResultSet rs, int rowNum) throws SQLException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Task task = new Task();
         task.setId(rs.getLong("id"));
         task.setTitle(rs.getString("title"));
         task.setStatus(TaskStatus.valueOf(rs.getString("status")));
         task.setCreatedBy(rs.getLong("createdBy"));
-        task.setCreatedAt(LocalDateTime.parse(rs.getString("createdAt"),formatter));
+        task.setCreatedAt(rs.getTimestamp("createdAt").toLocalDateTime());
         return task;
     }
 

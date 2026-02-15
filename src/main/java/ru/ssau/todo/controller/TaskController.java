@@ -1,8 +1,8 @@
-package ru.ssau.todo.Controller;
+package ru.ssau.todo.controller;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.ssau.todo.Service.TaskService;
+import ru.ssau.todo.service.TaskService;
 import ru.ssau.todo.entity.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,8 +25,7 @@ public class TaskController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Task> createTask(@RequestBody Task task) throws Exception {
+    public ResponseEntity<Task> createTask(@RequestBody Task task) {
         Task task1 = taskService.create(task);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -35,7 +33,6 @@ public class TaskController {
                 .toUri();
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(location);
-        //return taskRepository.create(task);
         return new ResponseEntity<>(task1, headers, HttpStatus.CREATED);
     }
 
