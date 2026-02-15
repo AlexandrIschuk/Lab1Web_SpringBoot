@@ -51,15 +51,12 @@ public class TaskInMemoryRepository implements TaskRepository {
     }
 
     @Override
-    public void update(Task task) throws Exception {
+    public void update(Task task) {
         if (task == null) {
             throw new IllegalArgumentException("Task cannot be null");
         }
         Long taskId = task.getId();
         Task task1 = findById(taskId).orElseThrow();
-        if (taskId == null || !storage.containsKey(taskId)) {
-            throw new Exception("Task with id " + taskId + " not found");
-        }
         task1.setStatus(task.getStatus());
         task1.setTitle(task.getTitle());
         storage.put(taskId, task1);

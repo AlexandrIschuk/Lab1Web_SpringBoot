@@ -50,7 +50,6 @@ public class TaskJdbcRepository implements TaskRepository{
     @Override
     public List<Task> findAll(LocalDateTime from, LocalDateTime to, long userId) {
         String sql = "SELECT * FROM task WHERE createdBy = :userId AND createdAt >= :from AND createdAt <= :to";
-        List<Task> taskList = new ArrayList<>();
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("userId",userId);
         params.addValue("from",from);
@@ -60,7 +59,7 @@ public class TaskJdbcRepository implements TaskRepository{
     }
 
     @Override
-    public void update(Task task) throws Exception {
+    public void update(Task task) throws TaskNotFoundException {
 
         String sql = "UPDATE task SET title = :title, status = :status WHERE id = :id ";
         MapSqlParameterSource params = new MapSqlParameterSource();

@@ -3,6 +3,7 @@ package ru.ssau.todo.service;
 import org.springframework.stereotype.Service;
 import ru.ssau.todo.entity.Task;
 import ru.ssau.todo.entity.TaskStatus;
+import ru.ssau.todo.repository.TaskNotFoundException;
 import ru.ssau.todo.repository.TaskRepository;
 
 import java.time.LocalDateTime;
@@ -38,7 +39,7 @@ public class TaskService {
         return taskRepository.findAll(from, to, userId);
     }
 
-    public void update(Task task) throws Exception {
+    public void update(Task task) throws TaskNotFoundException {
         Task task1 = taskRepository.findById(task.getId()).orElseThrow();
         if ((task.getStatus() == TaskStatus.DONE || task.getStatus() == TaskStatus.CLOSED) || ((task1.getStatus() == TaskStatus.IN_PROGRESS && task.getStatus() == TaskStatus.OPEN) || (task1.getStatus() == TaskStatus.OPEN && task.getStatus() == TaskStatus.IN_PROGRESS))) {
             taskRepository.update(task);

@@ -1,13 +1,16 @@
 package ru.ssau.todo.controller;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.ssau.todo.repository.TaskNotFoundException;
 import ru.ssau.todo.service.TaskService;
 import ru.ssau.todo.entity.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,7 +41,6 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable long id) {
-
         return taskService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -50,12 +52,12 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Optional<Task>> updateTask(@PathVariable long id, @RequestBody Task task) {
+    public ResponseEntity<Task> updateTask(@PathVariable long id, @RequestBody Task task) {
         try {
             task.setId(id);
             taskService.update(task);
-            return ResponseEntity.ok(taskService.findById(id));
-        } catch (Exception e) {
+            return ResponseEntity.ok(taskService.findById(id).orElseThrow(() -> new TaskNotFoundException("Task not found")));
+        } catch (TaskNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -69,7 +71,6 @@ public class TaskController {
     @GetMapping("/active/count")
     public Map<String, Long> countActiveTask(@RequestParam long userId) {
         long count = taskService.countActiveTasksByUserId(userId);
-
         return Map.of("activeTasksCount", count);
     }
 }
