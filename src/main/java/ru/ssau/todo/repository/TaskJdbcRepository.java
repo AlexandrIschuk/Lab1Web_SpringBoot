@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import ru.ssau.todo.Service.TaskService;
 import ru.ssau.todo.entity.Task;
+import ru.ssau.todo.entity.TaskStatus;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -21,7 +22,6 @@ import java.util.stream.Collectors;
 @Profile("JDBC")
 public class TaskJdbcRepository implements TaskRepository{
 
-    @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public TaskJdbcRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
@@ -35,13 +35,13 @@ public class TaskJdbcRepository implements TaskRepository{
         }
         LocalDateTime now = LocalDateTime.now();
         task.setCreatedAt(now.truncatedTo(ChronoUnit.SECONDS));
-        String sql = "INSERT INTO task (title, status, createdBy, createdAt) VALUES (:title, :status, :createdBy, :createdAt)";
+        String sql = "INSERT INTO task (title, status, createdBy, createdAt) VALUES (:title, :status, :createdBy, :createdAt) RETURNING id";
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("title",task.getTitle());
         params.addValue("status",task.getStatus().toString());
         params.addValue("createdBy",task.getCreatedBy());
         params.addValue("createdAt",task.getCreatedAt());
-        namedParameterJdbcTemplate.update(sql, params);
+        task.setId(namedParameterJdbcTemplate.queryForObject(sql, params, Long.class));
         return task;
     }
 
@@ -90,8 +90,8 @@ public class TaskJdbcRepository implements TaskRepository{
         String sql = "SELECT COUNT(*) FROM task WHERE (status = :open OR status = :in_progress) AND createdBy = :userId";
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("userId",userId);
-        params.addValue("open","OPEN");
-        params.addValue("in_progress","IN_PROGRESS");
+        params.addValue("open", TaskStatus.OPEN.name());
+        params.addValue("in_progress",TaskStatus.IN_PROGRESS.name());
         return namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
     }
 }

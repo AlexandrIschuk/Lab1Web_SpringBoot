@@ -7,7 +7,6 @@ import ru.ssau.todo.entity.Task;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.ssau.todo.repository.TaskRepository;
 
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -74,8 +73,6 @@ public class TaskController {
     public Map<String, Long> countActiveTask(@RequestParam long userId) {
         long count = taskService.countActiveTasksByUserId(userId);
 
-        Map<String, Long> response = new HashMap<>();
-        response.put("activeTasksCount", count);
-        return response;
+        return Map.of("activeTasksCount", count);
     }
 }
